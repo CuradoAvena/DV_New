@@ -1,17 +1,17 @@
 using UnityEngine;
-using UnityEngine.InputSystem; // Necesario para el nuevo sistema
+using UnityEngine.InputSystem;
 
 public class MouseLook : MonoBehaviour
 {
-    [Header("Configuración de Cámara")]
+    [Header("ConfiguraciÃ³n de CÃ¡mara")]
     [SerializeField] private float mouseSensitivity = 50f;
 
-    // Asignamos valores por defecto razonables (-90 y 90 grados es el estándar para no "rompernos el cuello")
+    // Asignamos valores por defecto razonables (-90 y 90 grados es el estÃ¡ndar para no "rompernos el cuello")
     [SerializeField] private float clampNeg = -90f;
     [SerializeField] private float clampPos = 90f;
 
     [Header("Referencias")]
-    // Aquí arrastrarán el objeto principal del jugador (el que tiene el CharacterController)
+    // AquÃ­ arrastrarÃ¡n el objeto principal del jugador (el que tiene el CharacterController)
     [SerializeField] private Transform playerBody;
 
     [Header("Controles (Nuevo Input System)")]
@@ -32,7 +32,7 @@ public class MouseLook : MonoBehaviour
 
     void Start()
     {
-        // ¡Súper útil para los alumnos! Oculta el cursor y lo bloquea en el centro del juego.
+        // Â¡SÃºper Ãºtil para los alumnos! Oculta el cursor y lo bloquea en el centro del juego.
         Cursor.lockState = CursorLockMode.Locked;
     }
 
@@ -45,11 +45,11 @@ public class MouseLook : MonoBehaviour
         float mouseX = lookInput.x * mouseSensitivity * Time.deltaTime;
         float mouseY = lookInput.y * mouseSensitivity * Time.deltaTime;
 
-        // 3. Calcular la rotación vertical (mirar arriba/abajo)
+        // 3. Calcular la rotaciÃ³n vertical (mirar arriba/abajo)
         xRotation -= mouseY;
         xRotation = Mathf.Clamp(xRotation, clampNeg, clampPos);
 
-        // 4. Aplicar la rotación a la cámara
+        // 4. Aplicar la rotaciÃ³n a la cÃ¡mara
         transform.localRotation = Quaternion.Euler(xRotation, 0f, 0f);
 
         // 5. Rotar todo el cuerpo del jugador horizontalmente (izquierda/derecha)

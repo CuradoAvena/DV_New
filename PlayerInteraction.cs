@@ -6,6 +6,13 @@ public class PlayerInteraction : MonoBehaviour
     [Header("Inventario")]
     [SerializeField] private int puntos = 0;
 
+    private PlayerEnergy sistemaEnergia;
+
+    private void Start()
+    {
+        // Conectamos el script de energía automáticamente al iniciar
+        sistemaEnergia = GetComponent<PlayerEnergy>();
+    }
     private void OnTriggerEnter(Collider other)
     {
         // Usamos CompareTag por limpieza y eficiencia
@@ -26,6 +33,20 @@ public class PlayerInteraction : MonoBehaviour
             }
 
             Debug.Log("Objeto recolectado. Puntos: " + puntos);
+        }
+
+        else if (other.CompareTag("Bateria"))
+        {
+            // Buscamos si este cubo específico tiene su propio valor de energía
+            ItemEnergia bateriaTocada = other.GetComponent<ItemEnergia>();
+
+            if (bateriaTocada != null && sistemaEnergia != null)
+            {
+                // Le pasamos la cantidad EXACTA que dice esa batería al jugador
+                sistemaEnergia.RecargarEnergia(bateriaTocada.cantidadQueRecarga);
+
+                other.gameObject.SetActive(false); // Apagamos la batería
+            }
         }
     }
 }

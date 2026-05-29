@@ -8,10 +8,23 @@ public class PlayerInteraction : MonoBehaviour
 
     private PlayerEnergy sistemaEnergia;
 
+
+    [Header("3. Portal / Puerta Final")]
+    [SerializeField] private int llavesActuales = 0;
+    // Los alumnos pueden decidir cuántas llaves esconden en su nivel
+    [SerializeField] private int llavesNecesarias = 3;
+    // Aquí arrastran el objeto 3D de su portal o puerta abierta
+    [SerializeField] private GameObject portalFinal;
+
     private void Start()
     {
         // Conectamos el script de energía automáticamente al iniciar
         sistemaEnergia = GetComponent<PlayerEnergy>();
+
+        if (portalFinal != null)
+        {
+            portalFinal.SetActive(false);
+        }
     }
     private void OnTriggerEnter(Collider other)
     {
@@ -46,6 +59,25 @@ public class PlayerInteraction : MonoBehaviour
                 sistemaEnergia.RecargarEnergia(bateriaTocada.cantidadQueRecarga);
 
                 other.gameObject.SetActive(false); // Apagamos la batería
+            }
+        }
+
+        else if (other.CompareTag("Llave"))
+        {
+            llavesActuales++;
+            other.gameObject.SetActive(false); // Desaparece la llave recogida
+
+            Debug.Log("Llave recogida: " + llavesActuales + " de " + llavesNecesarias);
+
+            // Evaluamos lógicamente si ya alcanzamos la meta
+            if (llavesActuales >= llavesNecesarias)
+            {
+                if (portalFinal != null)
+                {
+                    // ¡Encendemos el portal en el mundo real!
+                    portalFinal.SetActive(true);
+                    Debug.Log("¡Meta alcanzada! El portal se ha abierto.");
+                }
             }
         }
     }

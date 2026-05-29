@@ -8,11 +8,15 @@ public class FPController : MonoBehaviour
     [Header("Configuración de Movimiento")]
     [SerializeField] private float speed = 5f;
     [SerializeField] private float jumpHeight = 2f;
+    [SerializeField] private float sprintSpeed = 10f; //linea para correr
+
+    [SerializeField] private float costoEnergiaPorSegundo = 15f; //energia que gasta
 
     [Header("Controles (Nuevo Input System)")]
     // Definimos las acciones para que las configuren en el Inspector
     [SerializeField] private InputAction moveAction;
     [SerializeField] private InputAction jumpAction;
+    [SerializeField] private InputAction sprintAction; // NUEVO: Acción para correr
 
 
     [Header("Configuración de Físicas")]
@@ -27,22 +31,26 @@ public class FPController : MonoBehaviour
     private CharacterController controller;
     private Vector3 velocity;
     private bool isGrounded;
+    private PlayerEnergy sistemaEnergia; // Referencia a nuestra batería
 
     private void OnEnable()
     {
         moveAction.Enable();
         jumpAction.Enable();
+        sprintAction.Enable();
     }
 
     private void OnDisable()
     {
         moveAction.Disable();
         jumpAction.Disable();
+        sprintAction.Disable();
     }
 
     void Start()
     {
         controller = GetComponent<CharacterController>();
+        sistemaEnergia = GetComponent<PlayerEnergy>(); //energia
     }
 
     void Update()
@@ -54,21 +62,28 @@ public class FPController : MonoBehaviour
             velocity.y = -2f;
         }
 
-        // 2. Leer los Inputs del Nuevo Sistema
-        // Nos devuelve un Vector2 (X, Y), que usaremos para movernos hacia los lados y hacia adelante
+        float velocidadActual = speed;
+        // Verificamos si presiona el botón y si tiene batería
+        if (sprintAction.IsPressed() && sistemaEnergia != null && sistemaEnergia.TieneEnergia())
+        {
+            velocidadActual = sprintSpeed; // Aceleramos
+            sistemaEnergia.GastarEnergia(costoEnergiaPorSegundo * Time.deltaTime);
+        }
+
+        // 3. Leer los Inputs (¡Solo lo declaramos una vez aquí!)
         Vector2 moveInput = moveAction.ReadValue<Vector2>();
 
-        // 3. Aplicar Movimiento Horizontal
+        // 4. Aplicar Movimiento Horizontal con la velocidad dinámica
         Vector3 move = transform.right * moveInput.x + transform.forward * moveInput.y;
-        controller.Move(move * speed * Time.deltaTime);
+        controller.Move(move * velocidadActual * Time.deltaTime);
 
-        // 4. Lógica de Salto
+        // 5. Lógica de Salto
         if (jumpAction.WasPressedThisFrame() && isGrounded)
         {
             velocity.y = Mathf.Sqrt(jumpHeight * -2f * gravity);
         }
 
-        // 5. Aplicar Gravedad
+        // 6. Aplicar Gravedad
         velocity.y += gravity * Time.deltaTime;
         controller.Move(velocity * Time.deltaTime);
     }

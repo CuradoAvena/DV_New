@@ -70,10 +70,6 @@ public class EnemigoTactico : MonoBehaviour
         }
     }
 
-    // ─────────────────────────────────────────────
-    //  VISIÓN CON RAYCAST
-    // ─────────────────────────────────────────────
-
     /// <summary>
     /// Devuelve true solo si el jugador está dentro del rango Y sin obstáculos entre medio.
     /// El rayo sale desde la altura de los ojos del enemigo hacia la altura de los ojos del jugador.
@@ -99,10 +95,6 @@ public class EnemigoTactico : MonoBehaviour
         Debug.DrawRay(origen, dir, Color.green);
         return true;
     }
-
-    // ─────────────────────────────────────────────
-    //  COMPORTAMIENTOS
-    // ─────────────────────────────────────────────
 
     private void ComportamientoPatrulla(float distancia)
     {
@@ -156,8 +148,6 @@ public class EnemigoTactico : MonoBehaviour
             BuscarNuevoPuntoAleatorio();
             Debug.Log($"{miNombre}: perdió al jugador de vista, saliendo de la cola.");
         }
-        // Si por alguna razón ya tiene rol asignado (por RecibirAsignacionDesdeCola),
-        // la transición ya la hizo ese método; no hace falta hacer nada aquí.
     }
 
     private void ComportamientoPosicionamiento(float distancia)
@@ -207,10 +197,6 @@ public class EnemigoTactico : MonoBehaviour
         }
     }
 
-    // ─────────────────────────────────────────────
-    //  CALLBACK DE LA COLA
-    // ─────────────────────────────────────────────
-
     /// <summary>
     /// CombatManager llama a este método cuando se libera un hueco y le toca a este enemigo.
     /// </summary>
@@ -221,10 +207,6 @@ public class EnemigoTactico : MonoBehaviour
         estadoActual = EstadoIA.Posicionandose;
         GritarOrdenTactica();
     }
-
-    // ─────────────────────────────────────────────
-    //  HELPERS
-    // ─────────────────────────────────────────────
 
     private Vector3 CalcularDestinoPorRol()
     {

@@ -3,21 +3,19 @@ using UnityEngine;
 public class DañoContacto : MonoBehaviour
 {
     [Header("Configuración de Daño")]
-    [SerializeField] private int puntosDeDaño = 1;
+    public int corazonesQueQuita = 1;
 
-    // Usamos OnCollisionEnter porque los enemigos suelen tener cuerpos sólidos
     private void OnTriggerEnter(Collider other)
     {
-        bool esElJugador = other.CompareTag("Player") || other.transform.root.CompareTag("Player");
-
-        if (esElJugador)
+        // Verificamos si tocamos al jugador
+        if (other.CompareTag("Player"))
         {
-            // Buscamos el componente de salud en la raíz del jugador
-            PlayerHealth salud = other.transform.root   .GetComponentInChildren<PlayerHealth>();
+            // Buscamos el script de salud en el root del jugador
+            PlayerHealth saludJugador = other.transform.root.GetComponent<PlayerHealth>();
 
-            if (salud != null)
+            if (saludJugador != null)
             {
-                salud.RecibirDaño(puntosDeDaño);
+                saludJugador.RecibirDaño(corazonesQueQuita);
             }
         }
     }

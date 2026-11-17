@@ -9,6 +9,9 @@ public class MenuManager : MonoBehaviour
     [SerializeField] private GameObject _pauseMenuPanel;
     [SerializeField] private GameObject _settingsMenuPanel;
 
+    [Header("Cámara")]
+    [SerializeField] private MenuCameraMover _cameraMover;
+
     private GameObject _currentActivePanel;
 
     private void Awake()
@@ -27,19 +30,32 @@ public class MenuManager : MonoBehaviour
     public void OpenSettings()
     {
         // Guarda temporalmente cuál panel estaba abierto para poder regresar
-        if (_mainMenuPanel != null && _mainMenuPanel.activeSelf) _currentActivePanel = _mainMenuPanel;
+        bool fromMain = _mainMenuPanel != null && _mainMenuPanel.activeSelf;
+        if (fromMain) _currentActivePanel = _mainMenuPanel;
         if (_pauseMenuPanel != null && _pauseMenuPanel.activeSelf) _currentActivePanel = _pauseMenuPanel;
 
         _mainMenuPanel?.SetActive(false);
         _pauseMenuPanel?.SetActive(false);
-        _settingsMenuPanel?.SetActive(true);
+
+        // Desde el menú de inicio la cámara viaja al punto B y los ajustes
+        // aparecen al llegar. Desde pausa aparecen directo.
+        if (fromMain && _cameraMover != null)
+            _cameraMover.GoToB(() => _settingsMenuPanel?.SetActive(true));
+        else
+            _settingsMenuPanel?.SetActive(true);
     }
 
     public void CloseSettings()
     {
         _settingsMenuPanel?.SetActive(false);
+
         // Regresa al menú de donde venía el usuario
-        if (_currentActivePanel != null)
+        if (_currentActivePanel == _mainMenuPanel && _cameraMover != null)
+        {
+            // La cámara vuelve al punto A y el menú aparece al llegar
+            _cameraMover.GoToA(() => _currentActivePanel.SetActive(true));
+        }
+        else if (_currentActivePanel != null)
         {
             _currentActivePanel.SetActive(true);
         }

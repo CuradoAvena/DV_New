@@ -36,8 +36,16 @@ public class MenuCameraMover : MonoBehaviour
         float duration = Mathf.Max(0.01f, _duration);
         float t = 0f;
 
-        while (t < 1f)
+         while (t < 1f)
         {
             t += Time.unscaledDeltaTime / duration;   // funciona aunque el juego esté en pausa
             float k = _curve.Evaluate(Mathf.Clamp01(t));
-            transform.position = Vector3.Lerp(startPos, target.position,
+            transform.position = Vector3.Lerp(startPos, target.position, k);
+            transform.rotation = Quaternion.Slerp(startRot, target.rotation, k);
+            yield return null;
+        }
+
+        _routine = null;
+        onArrive?.Invoke();   // avisa cuando la cámara llegó
+    }
+}
